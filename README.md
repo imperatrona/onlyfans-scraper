@@ -11,7 +11,7 @@ npm i @imperatrona/onlyfans-scraper
 ## Usage
 
 ```typescript
-import Scrapy from "onlyfans-scraper";
+import Scrapy from "@imperatrona/onlyfans-scraper";
 import { HTTPError } from "got";
 
 const client = new Scrapy();
@@ -30,7 +30,7 @@ try {
 
 You can add proxy agent after initialization.
 ```typescript
-import Scrapy from "onlyfans-scraper";
+import Scrapy from "@imperatrona/onlyfans-scraper";
 import { HttpsProxyAgent } from "hpagent";
 
 const client = new Scrapy();
@@ -45,7 +45,7 @@ client.setProxy({
 By default client generate anon credentials, but you can use your personal account. 
 
 ```typescript
-import Scrapy from "onlyfans-scraper";
+import Scrapy from "@imperatrona/onlyfans-scraper";
 
 const client = new Scrapy({
   userId: "",
