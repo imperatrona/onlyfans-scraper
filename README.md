@@ -33,10 +33,9 @@ import Scrapy from "@imperatrona/onlyfans-scraper";
 import { HttpsProxyAgent } from "hpagent";
 
 const client = new Scrapy();
+const agent = new HttpsProxyAgent({ proxy: "http://0.0.0.0:0000" });
 
-client.setProxy({
-	http: new HttpsProxyAgent({ proxy: "http://0.0.0.0:0000" }),
-});
+client.setProxy(agent);
 ```
 
 ### Auth with your credentials

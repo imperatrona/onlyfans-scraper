@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import axios from "axios";
 
-import type { HttpsProxyAgent } from "https-proxy-agent";
+import type { HttpsProxyAgent } from "hpagent";
 import type { Rules, User } from "./types/onlyfans.js";
 
 interface Auth {
@@ -24,7 +24,7 @@ class Scrapy {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
   };
 
-  agent: HttpsProxyAgent<string> | undefined = undefined;
+  agent: HttpsProxyAgent | undefined = undefined;
 
   constructor(data?: Auth) {
     this.auth = {
@@ -34,7 +34,7 @@ class Scrapy {
     };
   }
 
-  setProxy(agents: HttpsProxyAgent<string>) {
+  setProxy(agents: HttpsProxyAgent) {
     this.agent = agents;
   }
 
