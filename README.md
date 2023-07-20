@@ -1,5 +1,5 @@
 # Onlyfans Scraper
-This lib created for easy access to onlyfans profiles. For analytics only.
+This lib created for easy access to onlyfans profiles. For analytics only. Dynamic rules fetched from [deviint/onlyfans-dynamic-rules](https://github.com/deviint/onlyfans-dynamic-rules) on client initialization.
 
 
 ## Installation
