@@ -12,7 +12,6 @@ npm i @imperatrona/onlyfans-scraper
 
 ```typescript
 import Scrapy from "@imperatrona/onlyfans-scraper";
-import { HTTPError } from "got";
 
 const client = new Scrapy();
 
@@ -20,8 +19,8 @@ try {
 	const user = await client.getUser("teddytorresxxx");
 	console.log(user);
 } catch (err) {
-	if (err instanceof HTTPError) {
-		console.error(err.code, err.message);
+	if (err instanceof Error) {
+		console.error(err.message);
 	}
 }
 ```
