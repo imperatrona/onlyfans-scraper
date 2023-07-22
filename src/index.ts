@@ -3,8 +3,9 @@ import { URL } from "url";
 import axios from "axios";
 
 import type { HttpsProxyAgent } from "hpagent";
+import { paths } from "./paths";
 import { Rules, getDynamicRules } from "./getDynamicRules";
-import type { User, SocialButtons } from "./types";
+import type { User, SocialButtons, PostsResponse } from "./types";
 
 interface Auth {
   userId: number;
@@ -18,17 +19,6 @@ function sha1(value: string) {
 }
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const BASE = "https://onlyfans.com";
-
-const paths = {
-  init: () => new URL(BASE + "/api2/v2/init"),
-  me: () => new URL(BASE + "/api2/v2/users/me"),
-  user: (username: string | number) =>
-    new URL(BASE + `/api2/v2/users/${username}`),
-  userSocialButtons: (id: number) =>
-    new URL(BASE + `/api2/v2/users/${id}/social/buttons`),
-};
 
 class Scrapy {
   delay = 0;
@@ -187,6 +177,15 @@ class Scrapy {
   }
 
   /**
+   * Returns user list by ids
+   */
+  async getUserList(ids: number[]) {
+    if (!this.auth.cookie) await this.#init();
+    if (ids.length > 10) throw new Error("too much ids, limit 10");
+    return this.#getRequest<{ [key: string]: User }>(paths.userList(ids));
+  }
+
+  /**
    * Returns currently authorized user
    */
   async getMe() {
@@ -204,6 +203,24 @@ class Scrapy {
       throw new Error("client need to be authorized to use this method");
     }
     return this.#getRequest<SocialButtons[]>(paths.userSocialButtons(id));
+  }
+
+  /**
+   * Get posts of user
+   */
+  async *getUserPosts(
+    id: number,
+    cursor: string | null = null
+  ): AsyncGenerator<PostsResponse> {
+    let latestPage = cursor;
+    while (true) {
+      const req = await this.#getRequest<PostsResponse>(
+        paths.userPosts(id, latestPage)
+      );
+      latestPage = req.tailMarker;
+      yield req;
+      if (!req.hasMore) break;
+    }
   }
 
   GetSession() {

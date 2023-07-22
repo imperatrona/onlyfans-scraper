@@ -1,3 +1,5 @@
+// User
+
 export interface User {
   view: string;
   avatar: string;
@@ -181,6 +183,8 @@ export interface ListsState {
   canAddUser: boolean;
 }
 
+// User Social Buttons
+
 export interface SocialButtons {
   id: number;
   sort: number;
@@ -190,4 +194,125 @@ export interface SocialButtons {
   link: string;
   url: string;
   isValid: boolean;
+}
+
+// Posts
+
+export interface PostsResponse {
+  list: Post[];
+  hasMore: boolean;
+  headMarker: string;
+  tailMarker: string;
+  counters: Counters;
+}
+
+export interface Post {
+  responseType: string;
+  id: number;
+  postedAt: string;
+  postedAtPrecise: string;
+  expiredAt: any;
+  author: Author;
+  text: string;
+  rawText: string;
+  lockedText: boolean;
+  isFavorite: boolean;
+  canReport: boolean;
+  canDelete: boolean;
+  canComment: boolean;
+  canEdit: boolean;
+  isPinned: boolean;
+  favoritesCount: number;
+  mediaCount: number;
+  isMediaReady: boolean;
+  voting: any[];
+  isOpened: boolean;
+  canToggleFavorite: boolean;
+  streamId: any;
+  price: any;
+  hasVoting: boolean;
+  isAddedToBookmarks: boolean;
+  isArchived: boolean;
+  isPrivateArchived: boolean;
+  isDeleted: boolean;
+  hasUrl: boolean;
+  isCouplePeopleMedia: boolean;
+  cantCommentReason: string;
+  commentsCount: number;
+  mentionedUsers: MentionedUser[];
+  linkedUsers: LinkedUser[];
+  linkedPosts: any[];
+  media: Medum[];
+  canViewMedia: boolean;
+  preview: any[];
+}
+
+export interface Author {
+  id: number;
+  _view: string;
+}
+
+export interface MentionedUser {
+  id: number;
+  _view: string;
+}
+
+export interface LinkedUser {
+  id: number;
+  _view: string;
+}
+
+export interface Medum {
+  id: number;
+  type: string;
+  convertedToVideo: boolean;
+  canView: boolean;
+  hasError: boolean;
+  createdAt: string;
+  info: Info;
+  source: Source;
+  squarePreview: string;
+  full: string;
+  preview: string;
+  thumb: string;
+  files: Files;
+  videoSources: VideoSources;
+}
+
+export interface Info {
+  source: Source;
+  preview: {
+    width: number;
+    height: number;
+    size: number;
+  };
+}
+
+export interface Source {
+  source: string;
+  width: number;
+  height: number;
+  size: number;
+  duration: number;
+}
+
+export interface Files {
+  preview: {
+    url: string;
+  };
+}
+
+export interface VideoSources {
+  "720": string;
+  "240": string;
+}
+
+export interface Counters {
+  audiosCount: number;
+  photosCount: number;
+  videosCount: number;
+  mediasCount: number;
+  postsCount: number;
+  streamsCount: number;
+  archivedPostsCount: number;
 }
