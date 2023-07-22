@@ -1,5 +1,5 @@
 ## v1.0.5
-– Added delay
+- Added delay
 - Added METHODS.md
 ### New methods
 - getUserPosts
