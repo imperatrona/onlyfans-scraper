@@ -1,18 +1,3 @@
-export interface Rules {
-  static_param: string;
-  start: string;
-  end: string;
-  checksum_constant: number;
-  checksum_indexes: number[];
-  app_token: string;
-  remove_headers: string[];
-  revision: string;
-  is_current: any;
-  format: string;
-  prefix: string;
-  suffix: string;
-}
-
 export interface User {
   view: string;
   avatar: string;

@@ -2,7 +2,8 @@ import { createHash } from "crypto";
 import axios from "axios";
 
 import type { HttpsProxyAgent } from "hpagent";
-import type { Rules, User } from "./types/onlyfans.js";
+import type { User } from "./types/onlyfans.js";
+import { Rules, getDynamicRules } from "./libs/getDynamicRules.js";
 
 interface Auth {
   userId: string;
@@ -38,19 +39,6 @@ class Scrapy {
     this.agent = agents;
   }
 
-  async #getDynamicRules(): Promise<Rules> {
-    const req = await axios.get(
-      "https://raw.githubusercontent.com/deviint/onlyfans-dynamic-rules/main/dynamicRules.json"
-    );
-
-    if (req.status !== 200)
-      throw new Error(
-        `can't recieve dynamic rules.\nStatus: ${req.status}\nBody: ${req.data}`
-      );
-
-    return req.data as Rules;
-  }
-
   #generateXBc(): string {
     const parts = [
       new Date().getTime(),
@@ -71,7 +59,7 @@ class Scrapy {
    * @private
    */
   async #init() {
-    this.#rules = await this.#getDynamicRules();
+    this.#rules = await getDynamicRules();
     if (!this.#rules) throw new Error("no dynamic rules");
 
     const PATH = "/api2/v2/init";
