@@ -16,7 +16,7 @@ import Scrapy from "@imperatrona/onlyfans-scraper";
 const client = new Scrapy();
 
 try {
-	const user = await client.getUser("teddytorresxxx");
+	const user = await client.getUser("onlyfans");
 	console.log(user);
 } catch (err) {
 	if (err instanceof Error) {
