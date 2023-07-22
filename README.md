@@ -11,6 +11,10 @@ npm i @imperatrona/onlyfans-scraper
 ## Usage
 
 ```typescript
+const Scrapy = require("@imperatrona/onlyfans-scraper");
+```
+
+```typescript
 import Scrapy from "@imperatrona/onlyfans-scraper";
 
 const client = new Scrapy();
