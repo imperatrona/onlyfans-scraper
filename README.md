@@ -29,6 +29,19 @@ try {
 }
 ```
 
+### Set Delay
+
+You can set minimal time to wait between api requests in miliseconds.
+```typescript
+client.delay = 5000 // will wait 5s (5000ms) between each api requests
+```
+
+To reset delay just set delay to 0.
+```typescript
+client.delay = 0
+```
+
+
 ### Set Proxy
 
 You can add proxy agent after initialization.

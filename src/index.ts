@@ -17,6 +17,8 @@ function sha1(value: string) {
   return createHash("sha1").update(value).digest("hex");
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const BASE = "https://onlyfans.com";
 
 const paths = {
@@ -29,6 +31,8 @@ const paths = {
 };
 
 class Scrapy {
+  delay = 0;
+  #latestRequest = 0;
   #rules: Rules | undefined;
   #agent: HttpsProxyAgent | undefined = undefined;
   auth: Auth = {
@@ -151,6 +155,15 @@ class Scrapy {
   async #getRequest<Type>(path: URL): Promise<Type> {
     await this.#getRules();
 
+    if (this.delay > 0) {
+      if (this.#latestRequest !== 0) {
+        const toWait = this.#latestRequest + this.delay - +new Date();
+        if (toWait > 0) await delay(toWait);
+      }
+
+      this.#latestRequest = +new Date();
+    }
+
     const req = await axios.get(path.toString(), {
       headers: this.#createHeaders(path.pathname + path.search),
       httpsAgent: this.#agent,
@@ -184,7 +197,7 @@ class Scrapy {
   }
 
   /**
-   * Get social buttons of user, make sure you subscribed for it.
+   * Get social buttons of user.
    */
   async getUserSocialButtons(id: number) {
     if (!this.auth.cookie && this.auth.userId === 0) {

@@ -1,3 +1,5 @@
+## v1.0.5
+– Added delay
 ## v1.0.4
 - Fixed library export
 ## v1.0.3
