@@ -1,12 +1,13 @@
 import { createHash } from "crypto";
+import { URL } from "url";
 import axios from "axios";
 
 import type { HttpsProxyAgent } from "hpagent";
-import type { User } from "./types/onlyfans.js";
-import { Rules, getDynamicRules } from "./libs/getDynamicRules.js";
+import { Rules, getDynamicRules } from "./getDynamicRules";
+import type { User, SocialButtons } from "./types";
 
 interface Auth {
-  userId: string;
+  userId: number;
   userAgent: string;
   xBc?: string;
   cookie?: string;
@@ -16,16 +17,25 @@ function sha1(value: string) {
   return createHash("sha1").update(value).digest("hex");
 }
 
+const BASE = "https://onlyfans.com";
+
+const paths = {
+  init: () => new URL(BASE + "/api2/v2/init"),
+  me: () => new URL(BASE + "/api2/v2/users/me"),
+  user: (username: string | number) =>
+    new URL(BASE + `/api2/v2/users/${username}`),
+  userSocialButtons: (id: number) =>
+    new URL(BASE + `/api2/v2/users/${id}/social/buttons`),
+};
+
 class Scrapy {
   #rules: Rules | undefined;
-
+  #agent: HttpsProxyAgent | undefined = undefined;
   auth: Auth = {
-    userId: "0",
+    userId: 0,
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
   };
-
-  agent: HttpsProxyAgent | undefined = undefined;
 
   constructor(data?: Auth) {
     this.auth = {
@@ -36,7 +46,7 @@ class Scrapy {
   }
 
   setProxy(agents: HttpsProxyAgent) {
-    this.agent = agents;
+    this.#agent = agents;
   }
 
   #generateXBc(): string {
@@ -55,18 +65,30 @@ class Scrapy {
   }
 
   /**
+   * Make sure actual rules is fetched
+   * @private
+   */
+  async #getRules() {
+    if (!this.#rules) {
+      try {
+        this.#rules = await getDynamicRules();
+      } catch (err) {
+        throw new Error("no dynamic rules");
+      }
+    }
+  }
+
+  /**
    * Get cookies if not defined, used for anonymous client
    * @private
    */
   async #init() {
-    this.#rules = await getDynamicRules();
-    if (!this.#rules) throw new Error("no dynamic rules");
+    await this.#getRules();
+    const PATH = paths.init();
 
-    const PATH = "/api2/v2/init";
-
-    const req = await axios.get(`https://onlyfans.com${PATH}`, {
-      headers: this.#createHeaders(PATH),
-      httpsAgent: this.agent,
+    const req = await axios.get(PATH.toString(), {
+      headers: this.#createHeaders(PATH.pathname + PATH.search),
+      httpsAgent: this.#agent,
     });
 
     if (req.status !== 200) {
@@ -119,29 +141,19 @@ class Scrapy {
     if (this.auth.cookie) {
       headers["cookie"] = this.auth.cookie;
     }
-    if (this.auth.userId && this.auth.userId !== "0") {
-      headers["user-id"] = this.auth.userId;
+    if (this.auth.userId && this.auth.userId !== 0) {
+      headers["user-id"] = this.auth.userId.toString();
     }
 
     return headers;
   }
 
-  async getUser(username: string) {
-    if (!this.auth.cookie) {
-      try {
-        await this.#init();
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      }
-    }
+  async #getRequest<Type>(path: URL): Promise<Type> {
+    await this.#getRules();
 
-    const PATH = `/api2/v2/users/${username}`;
-
-    const req = await axios.get(`https://onlyfans.com${PATH}`, {
-      headers: this.#createHeaders(PATH),
-      httpsAgent: this.agent,
+    const req = await axios.get(path.toString(), {
+      headers: this.#createHeaders(path.pathname + path.search),
+      httpsAgent: this.#agent,
     });
 
     if (req.status !== 200) {
@@ -150,7 +162,35 @@ class Scrapy {
       );
     }
 
-    return req.data as User;
+    return req.data;
+  }
+
+  /**
+   * Returns user by username or id
+   */
+  async getUser(username: string | number) {
+    if (!this.auth.cookie) await this.#init();
+    return this.#getRequest<User>(paths.user(username));
+  }
+
+  /**
+   * Returns currently authorized user
+   */
+  async getMe() {
+    if (!this.auth.cookie && this.auth.userId === 0) {
+      throw new Error("client need to be authorized to use this method");
+    }
+    return this.#getRequest<User>(paths.me());
+  }
+
+  /**
+   * Get social buttons of user, make sure you subscribed for it.
+   */
+  async getUserSocialButtons(id: number) {
+    if (!this.auth.cookie && this.auth.userId === 0) {
+      throw new Error("client need to be authorized to use this method");
+    }
+    return this.#getRequest<SocialButtons[]>(paths.userSocialButtons(id));
   }
 
   GetSession() {

@@ -180,3 +180,14 @@ export interface ListsState {
   hasUser: boolean;
   canAddUser: boolean;
 }
+
+export interface SocialButtons {
+  id: number;
+  sort: number;
+  label: string;
+  username: string;
+  socialMedia: string;
+  link: string;
+  url: string;
+  isValid: boolean;
+}
