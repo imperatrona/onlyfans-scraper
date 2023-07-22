@@ -4,11 +4,13 @@
   "description": "",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
     "build": "npx tsc",
-    "test": "jest",
-    "deploy": "rm -rf ./dist && npx tsc && npm publish"
+    "test": "npx jest",
+    "deploy": "rm -rf ./dist && npx tsc && npm publish && rm -rf ./dist"
   },
   "files": [
     "./dist"
@@ -21,6 +23,7 @@
     "hpagent": "^1.2.0"
   },
   "devDependencies": {
+    "@tsconfig/node16": "^16.1.0",
     "@types/jest": "^29.5.3",
     "@types/node": "^20.4.2",
     "jest": "^29.6.1",
