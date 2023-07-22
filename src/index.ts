@@ -198,4 +198,4 @@ class Scrapy {
   }
 }
 
-export default Scrapy;
+export = Scrapy;
