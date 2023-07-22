@@ -1,5 +1,9 @@
 ## v1.0.5
 – Added delay
+- Added METHODS.md
+### New methods
+- getUserPosts
+- getUserList
 ## v1.0.4
 - Fixed library export
 ## v1.0.3
