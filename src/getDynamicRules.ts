@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getDynamicRules(): Promise<Rules> {
   const req = await axios.get(
-    "https://raw.githubusercontent.com/deviint/onlyfans-dynamic-rules/main/dynamicRules.json"
+    "https://raw.githubusercontent.com/DATAHOARDERS/dynamic-rules/refs/heads/main/onlyfans.json"
   );
 
   if (req.status !== 200)
@@ -15,15 +15,12 @@ export async function getDynamicRules(): Promise<Rules> {
 
 export interface Rules {
   static_param: string;
-  start: string;
-  end: string;
-  checksum_constant: number;
+  format: string;
   checksum_indexes: number[];
+  checksum_constants: number[];
+  checksum_constant: number;
   app_token: string;
   remove_headers: string[];
-  revision: string;
-  is_current: any;
-  format: string;
-  prefix: string;
-  suffix: string;
+  error_code: number;
+  message: string;
 }

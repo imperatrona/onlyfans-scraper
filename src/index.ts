@@ -114,12 +114,11 @@ class Scrapy {
         0
       ) + this.#rules.checksum_constant;
 
-    const sign = [
-      this.#rules.prefix,
-      hash,
-      Math.abs(checksum).toString(16),
-      this.#rules.suffix,
-    ].join(":");
+    const [prefix, , , , suffix] = this.#rules.format.split(":");
+
+    const sign = [prefix, hash, Math.abs(checksum).toString(16), suffix].join(
+      ":"
+    );
 
     if (!this.auth.xBc) throw new Error("Unauthorized: xbc not generated");
 
